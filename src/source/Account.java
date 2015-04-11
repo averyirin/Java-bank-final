@@ -19,14 +19,13 @@ public abstract class Account
 	 * @param monthlyFee
 	 * @param interestRate 
 	 */
-	public Account(int accountType, double maxWithdrawal, double monthlyFee, double interestRate)
+	public Account(int accountType, double maxWithdrawal, double monthlyFee)
 	{
 		this.setAcctNumber(); // Assigning account number
 		this.setAcctType(accountType); // Assigning account type
 		this.acctBalance = 0.0;
 		this.maxWithdrawal = maxWithdrawal;
 		this.monthlyFee = monthlyFee;
-		this.interestRate = interestRate;
 	}
 
 	/**

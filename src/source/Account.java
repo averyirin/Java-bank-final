@@ -14,13 +14,15 @@ public abstract class Account
 	/**
 	 * Constructor
 	 * @param accountType
-	 * @param customerType 
+	 * @param maxWithdrawal
+	 * @param monthlyFee
+	 * @param interestRate 
 	 */
 	public Account(int accountType, double maxWithdrawal, double monthlyFee, double interestRate)
 	{
 		this.setAcctNumber(); // Assigning account number
 		this.setAcctType(accountType); // Assigning account type
-		this.acctBalance = 0.00;
+		this.acctBalance = 0.0;
 		this.maxWithdrawal = maxWithdrawal;
 		this.monthlyFee = monthlyFee;
 		this.interestRate = interestRate;
@@ -56,7 +58,7 @@ public abstract class Account
 	 * @param amount
 	 * @return true if transaction was successful, false otherwise
 	 */
-	public boolean Deposit(double amount)
+	public boolean deposit(double amount)
 	{
 		if (amount > 0.0)
 		{
@@ -72,8 +74,9 @@ public abstract class Account
 	/**
 	 * Withdraws a specified amount of currency from the account balance
 	 * @param amount
+	 * @return 
 	 */
-	public boolean Withdraw(double amount)
+	public boolean withdraw(double amount)
 	{
 		if (acctBalance >= amount && amount <= maxWithdrawal && amount > 0)
 		{
@@ -86,15 +89,33 @@ public abstract class Account
 			return false;
 		}
 	}
-
+	
 	/**
 	 * Updates the account balance with the specified amount
 	 * @param amount
+	 * @return
 	 */
-	private boolean updateAcctBalance(double amount)
+	public boolean updateAcctBalance(double amount)
 	{
 		this.acctBalance += amount;
 		return true;
+	}
+
+	public boolean calculateInterest()
+	{
+		return updateAcctBalance(this.acctBalance * this.interestRate);
+	}
+	
+	public boolean calculateMontlyFees()
+	{
+		if(this.monthlyFee <= this.acctBalance)
+		{
+			this.monthlyFee *= -1;
+			return updateAcctBalance(this.monthlyFee);
+		}
+		else
+			return false;
+			
 	}
 	
 	public void setMaxWithdrawal(double maxWithdrawal)

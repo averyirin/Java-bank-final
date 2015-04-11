@@ -5,6 +5,8 @@ public class CreditAccount extends Account
 	private static final double TRANSFER_FEE = 25.0;
 	private double creditAmount;
 	private double balanceOwing; // What our customer owes us
+	private final double REQUIRED_PAYMENT = 1.08; 
+	private double minumumPayment = 0.0;
 	
 	public CreditAccount(double maxWithdrawal, double monthlyFee, double interestRate, int custType)
 	{
@@ -34,21 +36,31 @@ public class CreditAccount extends Account
 		return this.balanceOwing;
 	}
 	// MUTATORS
-	public double calculateBalanceOwing()
+	private  void calculateBalanceOwing()
 	{
-		return this.balanceOwing = this.getCreditAmount() - this.getAcctBalance();
+		this.balanceOwing = this.getCreditAmount() - this.getAcctBalance() * REQUIRED_PAYMENT;
 	}
 	
+	/**
+	 * This method overrides the method from the super class
+	 * in order to update the amount of money owed to bank
+	 * @param amount
+	 * @return true if withdrawal was successful, false otherwise
+	 */
 	@Override
 	public boolean withdraw(double amount)
 	{
-		if(super.withdraw(amount))
+		if (super.withdraw(amount)) // this calls the super method and updates the balance of our account
 		{
-			
+			calculateBalanceOwing();
 			return true;
 		}
-		
+		else
+		{
+			return false;
+		}
 	}
+	
 	
 	@Override
 	public String toString()

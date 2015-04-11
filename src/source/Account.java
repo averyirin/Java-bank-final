@@ -9,6 +9,7 @@ public abstract class Account
 	private double monthlyFee;
 	private int transactionCount = 0;
 	private int freeTransactionCount;
+	private int transactionFee;
 	private double interestRate;
 
 	/**
@@ -106,7 +107,7 @@ public abstract class Account
 		return updateAcctBalance(this.acctBalance * this.interestRate);
 	}
 	
-	public boolean calculateMontlyFees()
+	public boolean deductMontlyFees()
 	{
 		if(this.monthlyFee <= this.acctBalance)
 		{
@@ -115,7 +116,6 @@ public abstract class Account
 		}
 		else
 			return false;
-			
 	}
 	
 	public void setMaxWithdrawal(double maxWithdrawal)

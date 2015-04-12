@@ -11,6 +11,8 @@ public abstract class Account
 	private int freeTransactionCount;
 	private int transactionFee;
 	private double interestRate;
+	private double totalOwed;
+	private double totalGained;
 
 	/**
 	 * CONSTRUCTOR
@@ -29,6 +31,8 @@ public abstract class Account
 		this.monthlyFee = monthlyFee;
 		this.freeTransactionCount = freeTransactionCount;
 		this.interestRate = interestRate;
+		this.totalGained = 0.0;
+		this.totalOwed = 0.0;
 	}
 	
 	/**
@@ -120,6 +124,7 @@ public abstract class Account
 		return updateAcctBalance(this.acctBalance * this.interestRate);
 	}
 	
+	// MUTATORS
 	public void setMaxWithdrawal(double maxWithdrawal)
 	{
 		this.maxWithdrawal = maxWithdrawal;
@@ -139,7 +144,12 @@ public abstract class Account
 	{
 		this.interestRate = interestRate;
 	}
-
+	
+	public void setTotalOwed(double amount)
+	{
+		this.totalOwed = amount;
+	}
+	
 	// ACCESSORS
 	public int getAcctNumber()
 	{
@@ -187,11 +197,16 @@ public abstract class Account
 	{
 		return this.interestRate;
 	}
+	
+	public double getTotalOwed()
+	{
+		return this.totalOwed + this.monthlyFee;
+	}
 
 	@Override
 	public String toString()
 	{
-		return String.format("Account# %17d | Type: %10s | Balance: %20.2f | Transactions: %11d |",
+		return String.format("Account# %3d | Type: %8s | Balance: %9.2f | Transactions: %3d |",
 				this.getAcctNumber(), this.getAcctTypeDesc(), this.getAcctBalance(), this.getAcctTransactionCount());
 	}
 }

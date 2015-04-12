@@ -3,16 +3,18 @@ package source;
 public class CreditAccount extends Account
 {
 	private final static int ACCT_TYPE = 3; // our account type is 3(credit)
-	private static final double TRANSFER_FEE = 25.00; // Fee to be deducted 
+	private static final double TRANSFER_FEE = 25.00; // Fee to be deducted on transfers
 	private final double REQUIRED_PAYMENT_COEF = 1.08; // 8% of the total owed
 	private double creditAmount; // This variable holds the amount of credit given to a customer
-	private double totalOwing; // Total of what is owed
+	private double creditOwing; // Total of what is owed
+	private double minCreditPayment;
 	
 	public CreditAccount(double acctBalance, double maxWithdrawal, double monthlyFee, int freeTransactionCount, double interestRate)
 	{
 		super(ACCT_TYPE, acctBalance, maxWithdrawal, monthlyFee, freeTransactionCount, interestRate);
 		this.creditAmount = this.getAcctBalance();
-		this.totalOwing = 0.0;
+		this.creditOwing = 0.0;
+		this.minCreditPayment = 0.0;
 	}
 	
 	// CUSTOM METHODS
@@ -29,7 +31,8 @@ public class CreditAccount extends Account
 	{
 		if(super.withdraw(amount))
 		{
-			this.totalOwing += amount * this.getInterestRate();
+			this.creditOwing += amount * this.getInterestRate();
+			this.setTotalOwed(this.creditOwing);
 			return true;
 		}
 		else
@@ -47,16 +50,12 @@ public class CreditAccount extends Account
 	{
 		if(super.deposit(amount))
 		{
-			this.totalOwing -= amount;
+			this.creditOwing -= amount;
+			this.setTotalOwed(this.creditOwing);
 			return true;
 		}
 		else
 			return false;
-	}
-	
-	public void calculateAllFees()
-	{
-		this.getMonthlyFee();
 	}
 	
 	
@@ -66,15 +65,15 @@ public class CreditAccount extends Account
 		return this.creditAmount;
 	}
 	
-	public double getTotalOwing()
+	public double getCreditOwing()
 	{
-		return this.totalOwing;
+		return this.creditOwing;
 	}
 	// MUTATORS
 	
 	@Override
 	public String toString()
 	{
-		return super.toString() + String.format("Credit amount: %20.2f | Balance owing: %15.2f | Interest rate: %8f", this.getCreditAmount(), this.getTotalOwing(), this.getInterestRate());
+		return super.toString() + String.format("Credit amount: %9.2f | Total owing: %8.2f | Interest rate: %8f", this.getTotalOwed(), this.getCreditOwing(), this.getInterestRate());
 	}
 }

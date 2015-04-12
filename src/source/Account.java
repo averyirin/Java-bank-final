@@ -97,17 +97,6 @@ public abstract class Account
 		}
 	}
 	
-	public boolean deductMonthlyFees()
-	{
-		if(this.monthlyFee <= this.acctBalance)
-		{
-			this.monthlyFee *= -1;
-			return updateAcctBalance(this.monthlyFee);
-		}
-		else
-			return false;
-	}
-	
 	/**
 	 * Updates the account balance with the specified amount
 	 * @param amount

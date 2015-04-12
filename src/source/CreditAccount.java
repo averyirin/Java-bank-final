@@ -73,6 +73,9 @@ public class CreditAccount extends Account
 	}
 	// MUTATORS
 	
+	/**
+	 * This method determines the minimum amount of money that has to be payed monthly
+	 */
 	public void setMinCreditPayment()
 	{
 		this.minCreditPayment = this.REQUIRED_PAYMENT_COEF * this.creditOwing;

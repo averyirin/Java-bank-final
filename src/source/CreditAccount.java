@@ -2,28 +2,41 @@ package source;
 
 public class CreditAccount extends Account
 {
-	private static final double TRANSFER_FEE = 25.0;
-	private double creditAmount;
-	private double balanceOwing; // What our customer owes us
-	private final double REQUIRED_PAYMENT = 1.08; 
-	private double minumumPayment = 0.0;
+	private final static int ACCT_TYPE = 3; // our account type is 3(credit)
+	private static final double TRANSFER_FEE = 25.00; // Fee to be deducted 
+	private final double REQUIRED_PAYMENT_COEF = 1.08; // 8% of the totalowed
+	private double creditAmount; // This variable holds the amount of credit given to a customer
+	private double totalOwing; // Total of what is owed
+	private double monthlyOwing; // The required  amount to be payed monthly
 	
-	public CreditAccount(double maxWithdrawal, double monthlyFee, double interestRate, int custType)
+	public CreditAccount(double acctBalance, double maxWithdrawal, double monthlyFee, int freeTransactionCount, double interestRate)
 	{
-		super(3, maxWithdrawal, monthlyFee, interestRate);
-		
-		if(custType == 1)
-			this.creditAmount = 5000.0;
-		else if(custType == 2)
-			this.creditAmount = 1000.0;
-		else if(custType == 3)
-			this.creditAmount = 3000.0;
-		else if(custType == 4)
-			this.creditAmount = 10000.0;
-		
-		this.updateAcctBalance(creditAmount);
-		this.balanceOwing = 0.0;
+		super(ACCT_TYPE, acctBalance, maxWithdrawal, monthlyFee, freeTransactionCount, interestRate);
+		this.creditAmount = this.getAcctBalance();
+		this.totalOwing = 0.0;
 	}
+	
+	// CUSTOM METHODS
+	/**
+	 * Since this is a credit account,
+	 * we have to keep track of the amount of money we owe to the bank
+	 * Thus, we override our withdraw method and adjust the balance owing attribute
+	 * every time a withdrawal operation is made.
+	 * @param amount
+	 * @return true if operation was successful, false otherwise
+	 */
+	@Override
+	public boolean withdraw(double amount)
+	{
+		if(super.withdraw(amount))
+		{
+			this.totalOwing += amount;
+			return true;
+		}
+		else
+			return false;
+	}
+	
 	
 	// ACCESSORS
 	public double getCreditAmount()
@@ -31,40 +44,15 @@ public class CreditAccount extends Account
 		return this.creditAmount;
 	}
 	
-	public double getBalanceOwing()
+	public double getTotalOwing()
 	{
-		return this.balanceOwing;
+		return this.totalOwing;
 	}
 	// MUTATORS
-	private  void calculateBalanceOwing()
-	{
-		this.balanceOwing = this.getCreditAmount() - this.getAcctBalance() * REQUIRED_PAYMENT;
-	}
-	
-	/**
-	 * This method overrides the method from the super class
-	 * in order to update the amount of money owed to bank
-	 * @param amount
-	 * @return true if withdrawal was successful, false otherwise
-	 */
-	@Override
-	public boolean withdraw(double amount)
-	{
-		if (super.withdraw(amount)) // this calls the super method and updates the balance of our account
-		{
-			calculateBalanceOwing();
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
 	
 	@Override
 	public String toString()
 	{
-		return super.toString() + String.format("Credit amount: %20.2f | Balance owing: %15.2f", this.getCreditAmount(), this.getBalanceOwing());
+		return super.toString() + String.format("Credit amount: %20.2f | Balance owing: %15.2f", this.getCreditAmount(), this.getTotalOwing());
 	}
 }

@@ -13,21 +13,33 @@ public abstract class Account
 	private double interestRate;
 
 	/**
-	 * Constructor
-	 * @param accountType
+	 * CONSTRUCTOR
+	 * @param ACCT_TYPE
+	 * @param acctBalance
 	 * @param maxWithdrawal
 	 * @param monthlyFee
 	 * @param interestRate 
 	 */
-	public Account(int accountType, double maxWithdrawal, double monthlyFee)
+	public Account(int ACCT_TYPE, double acctBalance, double maxWithdrawal, double monthlyFee, int freeTransactionCount, double interestRate)
 	{
 		this.setAcctNumber(); // Assigning account number
-		this.setAcctType(accountType); // Assigning account type
-		this.acctBalance = 0.0;
+		this.setAcctType(ACCT_TYPE); // Assigning account type
+		this.acctBalance = acctBalance;
 		this.maxWithdrawal = maxWithdrawal;
 		this.monthlyFee = monthlyFee;
+		this.freeTransactionCount = transactionCount;
+		this.interestRate = interestRate;
 	}
-
+	
+	/**
+	 * This method will return monthly fee for an account
+	 * @return monthlyFee
+	 */
+	public double calculateFees()
+	{
+		return this.monthlyFee;
+	}
+	
 	/**
 	 * retrieves account number from account support class
 	 * and assigns it to the new account
@@ -90,6 +102,17 @@ public abstract class Account
 		}
 	}
 	
+	public boolean deductMonthlyFees()
+	{
+		if(this.monthlyFee <= this.acctBalance)
+		{
+			this.monthlyFee *= -1;
+			return updateAcctBalance(this.monthlyFee);
+		}
+		else
+			return false;
+	}
+	
 	/**
 	 * Updates the account balance with the specified amount
 	 * @param amount
@@ -104,17 +127,6 @@ public abstract class Account
 	public boolean calculateInterest()
 	{
 		return updateAcctBalance(this.acctBalance * this.interestRate);
-	}
-	
-	public boolean deductMontlyFees()
-	{
-		if(this.monthlyFee <= this.acctBalance)
-		{
-			this.monthlyFee *= -1;
-			return updateAcctBalance(this.monthlyFee);
-		}
-		else
-			return false;
 	}
 	
 	public void setMaxWithdrawal(double maxWithdrawal)

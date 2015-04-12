@@ -3,220 +3,331 @@ package source;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Teller
-{
-	// Variables to hold user input
-	private static String firstName;
-	private static String lastName;
-	private static String sin;
-	private static String address;
-	private static int acctNumber;
-	private static double amount = 0;
-	private static String filter;
-	private static int userInput = -1; // this variable stores menu choices made by a user
-	private static int userInput_2 = -1; // this variable stores the index of the customer we choose to edit
-	private static Scanner scan = new Scanner(System.in);
+public class Teller {
 
-	// Variable to keep the menus going
-	private static boolean exitMenu1 = false;
-	private static boolean exitMenu2 = false;
-	// Customer class wrapper
-	private static Customer customer_temp;
-	// Collection for holding customer records
-	private static ArrayList<Customer> customerList = new ArrayList<Customer>();
-	// Collection for holding indexes of customers from customerList that match searching criteria
-	private static ArrayList<Integer> customerSearch = new ArrayList<Integer>();
+    // arraylist of customers
+    private static ArrayList<Customer> customerList = new ArrayList<>();
+    private static Scanner keyboard;
+    private static Customer tempCust;
+    private static ArrayList<Integer> customerSearch = new ArrayList<Integer>();
+    private static String input;
+    private static CustomerType tempCustType;
+    private static AccountType tempAcctType;
 
-	// adds a customer
-	public static void addCustomer(Customer customer)
-	{
-		customerList.add(customer);
-	}
+    // menu driven interface
+    public static void main(String[] args) {
+        Teller teller = new Teller();
+        keyboard = new Scanner(System.in);
+        teller.mainMenu();
+    }
 
-	// accessor for customer record
-	public static Customer getCustomer(int index)
-	{
-		return customerList.get(customerSearch.get(index - 1));
-	}
+    private void mainMenu() {
+        System.out.println("-Main-----------");
+        System.out.println("Input a command");
+        System.out.println("0. Exit program");
+        System.out.println("1. Create a new customer");
+        System.out.println("2. Search and manage customer information");
+        input = keyboard.next();
+        while (Integer.parseInt(input) != 0) {
+            switch (Integer.parseInt(input)) {
+                case 1:
+                    createCustomer();
+                    break;
+                case 2:
+                    lookupCustomer();
+                    break;
+                default:
+                    System.out.println("Please enter a valid command");
+                    break;
+            }
+            input = keyboard.next();
+        }
 
-	// looks up for a sequence of characters(filter) in customer names
-	public static String searchCustomer(String filter)
-	{
-		for (Customer customer : customerList)
-		{
-			if (customer.getFirstName().contains(filter))
-			{
-				customerSearch.add(customerList.indexOf(customer));
-			}
-		}
-		return String.format("Records found: %d", customerSearch.size());
-	}
+        System.out.println("Program ended");
+        System.exit(0);
+    }
 
-	// clears array that holds matching indexes from our search
-	public static void clearCustomerSearch()
-	{
-		customerSearch.clear();
-	}
+    private void createCustomer() {
+        System.out.println("-Customer Creation-----");
+        // set up customer information
 
-	// prints search results to the screen
-	public static StringBuilder displaySearchResults()
-	{
-		StringBuilder sb = new StringBuilder();
+        System.out.println("Customer Type");
+        System.out.println("1. Regular 2. Student 3. Senior 4. Business");
+        int custType = keyboard.nextInt();
+        tempCustType = CustomerType.values()[custType - 1];
+        System.out.println("First Name:");
+        String firstName = keyboard.next();
+        System.out.println("Last Name:");
+        String lastName = keyboard.next();
+        System.out.println("Address:");
+        keyboard.nextLine();
+        String address = keyboard.nextLine();
+        System.out.println("SIN:");
+        String sin = keyboard.next();
 
-		for (Customer customer : customerList)
-		{
-			for (int i = 0; i < customerSearch.size(); ++i)
-			{
-				if (customerList.indexOf(customer) == customerSearch.get(i))
-				{
-					sb.append(String.format("%10sRECORD# %d%n", " ", (customerSearch.indexOf(i) + 1)));
-					sb.append(customer.toString());
-					sb.append('\n');
+        tempCust = new Customer(firstName, lastName, sin, address, tempCustType.getCustomerType());
+        customerList.add(tempCust);
+        addAccount(tempCustType);
+        mainMenu();
+    }
 
-					for (Account account : customer.getAcctList())
-					{
-						sb.append(account.toString());
-						sb.append('\n');
-					}
-				}
-			}
-		}
-		return sb;
-	}
+    private void addAccount(CustomerType custType) {
+        System.out.println("What account would you like to make?");
+        int index = 1;
+        if (custType != CustomerType.STUDENT) {
+            System.out.print(index + ". Chequing ");
+            index++;
+        }
+        if (custType != CustomerType.BUSINESS) {
+            System.out.print(index + ". Savings ");
+            index++;
+        }
+        System.out.print(index + ". Credit ");
+        index++;
+        if (custType == CustomerType.BUSINESS) {
+            System.out.print(index + ". Business");
+            index++;
+        }
+        System.out.println("");
+        int accChosen = keyboard.nextInt();
+        if (custType == CustomerType.REGULAR) {
+            if (accChosen == 1) {
 
-// START OF THE MAIN METHOD
-	public static void main(String[] args)
-	{
-// FIRST LEVEL MENU
-		try
-		{
-			while (!exitMenu1) // First level menu
-			{
-				exitMenu2 = false; // We want to be able to enter the 2nd level menu
-				System.out.println("-1- (create a customer)\n-2- (view/edit a customer record)\n-9- (exit the program)");
-				userInput = Integer.parseInt(scan.nextLine());
-				switch (userInput)
-					{
-					case 1:
-						// Obtaining input from user
-						System.out.print("Enter your first name: ");
-						firstName = scan.nextLine();
-						System.out.print("Enter your last name: ");
-						lastName = scan.nextLine();
-						System.out.print("Enter your SIN: ");
-						sin = scan.nextLine();
-						System.out.print("Enter your address: ");
-						address = scan.nextLine();
+                tempAcctType = AccountType.CHEQUING;
+            } else if (accChosen == 2) {
 
-						// Creating and saving new customer record
-						customer_temp = new Customer(firstName, lastName, sin, address);
-						addCustomer(customer_temp);
-						break;
-					case 2:
-						if (!customerList.isEmpty())
-						{
-							System.out.print("Enter a name to search by: ");
-							filter = scan.nextLine();
+                tempAcctType = AccountType.SAVINGS;
+            } else if (accChosen == 3) {
 
-							System.out.println(searchCustomer(filter));
+                tempAcctType = AccountType.CREDIT;
+            }
+        } else if (tempCustType == CustomerType.STUDENT) {
+            if (accChosen == 1) {
 
-							if (!customerSearch.isEmpty())
-							{
-								System.out.println(displaySearchResults());
-	// SECOND LEVEL MENU
-								while (!exitMenu2)
-								{
-									// Get the index of a customer record (in customerList) from customerSearch
-									System.out.print("Choose a record number to edit: \n-9-(back to the main menu)\n");
-									userInput_2 = Integer.parseInt(scan.nextLine());
-									if (userInput_2 == 9)
-									{
-										clearCustomerSearch(); //purge our customerSearch array
-										exitMenu2 = true;
-									}
-									else
-									{
-										System.out.printf("%s%53s%n", "Change credentials: ", "Account operations: ");
-										System.out.printf("%s%52s%n%s%n", "-1-(name) -2-(surname) -3-(sin) -4-(address)", "-5-(deposit) -6-(withdraw) -7-(add account)", "-9-(back to the main menu)");
-										userInput = Integer.parseInt(scan.nextLine());
-										switch (userInput)
-											{
-											case 1:
-												System.out.print("Enter new name: ");
-												firstName = scan.nextLine();
-												getCustomer(userInput_2).setFirstName(firstName);
-												break;
-											case 2:
-												System.out.print("Enter new surname: ");
-												lastName = scan.nextLine();
-												getCustomer(userInput_2).setLastName(lastName);
-												break;
-											case 3:
-												System.out.print("Enter new SIN: ");
-												sin = scan.nextLine();
-												getCustomer(userInput_2).setSin(sin);
-												break;
-											case 4:
-												System.out.print("Enter new address: ");
-												address = scan.nextLine();
-												getCustomer(userInput_2).setAddress(address);
-												break;
-											case 5:
-												System.out.print("Enter account number: ");
-												acctNumber = Integer.parseInt(scan.nextLine());
-												System.out.print("Enter deposit amount: ");
-												amount = Double.parseDouble(scan.nextLine());
-												if (getCustomer(userInput_2).getAccount(acctNumber).Deposit(amount))
-													System.out.println("Successful deposit!");
-												else
-													System.out.println("Invalid amount specified. Operation cancelled.");
-												break;
-											case 6:
-												System.out.print("Enter account number: ");
-												acctNumber = Integer.parseInt(scan.nextLine());
-												System.out.print("Enter withdraw amount: ");
-												amount = Double.parseDouble(scan.nextLine());
-												if (getCustomer(userInput_2).getAccount(acctNumber).Withdraw(amount))
-													System.out.println("Successful withdraw!");
-												else
-													System.out.println("Insufficient balance/Limit exceeded. Operation cancelled.");
-												break;
-											case 7:
-												if(getCustomer(userInput_2).createAcct())
-												{
-													System.out.println("A new account has been added");
-												}
-												else
-												{
-													System.out.println("A maximum allowed number of accounts has been exceeded");
-												}
-												break;
-											case 9:
-												clearCustomerSearch(); //we purge our customerSearch array
-												exitMenu2 = true;
-												break;
-											default:
-												System.out.println("Invalid input");
-											}
-									}
-								}
-							}
-						}
-						else
-							System.out.println("There are no records present");
-						break;
-					case 9:
-						exitMenu1 = true;
-						break;
-					default:
-						System.out.println("Invalid input");
-					}
-			}
-		}
-		catch (Exception ex)
-		{
-			System.out.println("Terminating...");
-		}
-	} // END OF THE MAIN METHOD
+                tempAcctType = AccountType.SAVINGS;
+            } else if (accChosen == 2) {
+
+                tempAcctType = AccountType.CREDIT;
+            }
+        } else if (custType == CustomerType.SENIOR) {
+            if (accChosen == 1) {
+                tempAcctType = AccountType.CHEQUING;
+
+            } else if (accChosen == 2) {
+
+                tempAcctType = AccountType.SAVINGS;
+            } else if (accChosen == 3) {
+
+                tempAcctType = AccountType.CREDIT;
+            }
+        } else if (custType == CustomerType.BUSINESS) {
+            if (accChosen == 1) {
+
+                tempAcctType = AccountType.CHEQUING;
+            } else if (accChosen == 2) {
+
+                tempAcctType = AccountType.CREDIT;
+            } else if (accChosen == 3) {
+
+                tempAcctType = AccountType.BUSINESS;
+            }
+        }
+        //create the acount
+        switch (tempAcctType) {
+            case CHEQUING:
+                // chequing account
+                System.out.println("Chequing Created");
+                /*
+                 * RegularCust regCust = new RegularCust(firstName, lastName,
+                 * address, PIN); customerList.add(regCust);
+                 */
+
+                break;
+            case SAVINGS:
+                // student customer
+                System.out.println("Savings Created");
+                /*
+                 * System.out.println("Student Number?"); int stuNum =
+                 * keyboard.nextInt(); StudentCust studCust = new
+                 * StudentCust(firstName, lastName, address, PIN, stuNum);
+                 * customerList.add(studCust);
+                 */
+                break;
+            case CREDIT:
+                // Senior Customer
+                System.out.println("Credit Created");
+                // Customer seniorCust = new Customer(custType.SENIOR, firstName,
+                // lastName, address, PIN);
+
+                /*
+                 * SeniorCust senCust = new SeniorCust(firstName, lastName, address,
+                 * PIN); customerList.add(senCust);
+                 */
+                break;
+            case BUSINESS:
+                // Business Customer
+                System.out.println("Business Created");
+                /*
+                 * System.out.println("Stocks Available?"); int stockAvail =
+                 * keyboard.nextInt(); BusinessCust busCust = new
+                 * BusinessCust(firstName, lastName, address, PIN, stockAvail);
+                 * customerList.add(busCust);
+                 */
+                break;
+
+            default:
+                System.out.println("An error has occured");
+        }
+    }
+
+    private void lookupCustomer() {
+
+        System.out.println("-Listing Customers------");
+        if (customerList.isEmpty()) {
+            System.out.println("There are no customers in your application.");
+        }else{
+        displayCustomerList();
+        Customer foundCust = getManageCustomer();
+        if (foundCust != null) {
+            manageCustomer(foundCust);
+        } else {
+            System.out.println("No matching customer found");
+        }
+        }
+        mainMenu();
+    }
+
+    private void displayCustomerList() {
+
+        int i = 1;
+
+        String head = String.format("%s %20s %20s %20s %20s",
+                "ID", "First Name", "Last Name", "SIN", "Address");
+        System.out.println(head);
+
+        for (Customer tempCust : customerList) {
+            System.out.println(i + " " + tempCust.toString());
+            i++;
+        }
+
+    }
+
+    private Customer getManageCustomer() {
+        try{
+        System.out.println("Please enter the customer's ID");
+        int id = keyboard.nextInt();
+        return customerList.get(id-1);
+        }catch(IndexOutOfBoundsException e){
+            return null;
+        }
+        
+       
+    }
+
+    private void manageCustomer(Customer cust) {
+
+        System.out.println("-Edit "+cust.getFirstName()+" "+cust.getLastName()+"------");
+        // cust.displayCustomerInfo();
+        // cust.displayAccountInfo();
+        System.out.println("Input a command");
+        System.out.println("0. Back to main");
+        System.out.println("1. View balance");
+        System.out.println("2. Deposit into an account");
+        System.out.println("3. Withdraw from an account");
+        System.out.println("4. Add new account");
+        System.out.println("5. Edit customer information");
+        String input = keyboard.next();
+        while (Integer.parseInt(input) != 0) {
+            switch (Integer.parseInt(input)) {
+                case 1:
+                    getAllAccountBalance(cust);
+                    manageCustomer(cust);
+                    break;
+                case 2:
+                    chooseAccount(cust, TransactionType.DEPOSIT);
+                    break;
+                case 3:
+                    chooseAccount(cust,  TransactionType.WITHDRAWAL);
+                    break;
+                case 4:
+                    // create account
+                    break;
+                case 5:
+                    editInformation(cust);
+                    break;
+                default:
+                    System.out.println("Please enter a valid command");
+                    manageCustomer(cust);
+                    break;
+            }
+            input = keyboard.next();
+        }
+
+        mainMenu();
+    }
+ public void getAllAccountBalance(Customer cust){
+            String accBalance="";
+            String accType="";
+            System.out.println("Account Type    Account Balance");
+            for(Account tempAccount:cust.getAcctList()){
+                tempAcctType = AccountType.values()[tempAccount.getAcctType()];
+                accBalance += tempAcctType.toString()+": "+Double.toString(tempAccount.getAcctBalance());
+                System.out.print(accBalance);
+            }
+        }
+    private void chooseAccount(Customer cust, TransactionType transType) {
+        // Display account info
+        // cust.displayAccountInfo();
+        if(transType == TransactionType.DEPOSIT){
+            
+        }else if(transType == TransactionType.WITHDRAWAL){
+            
+        }
+       
+        manageCustomer(cust);
+    }
+
+    private void editInformation(Customer cust) {
+
+        System.out.println("-Edit Information------");
+        // display account info
+        // cust.displayCustomerInfo();
+        System.out.println("Input a command");
+        System.out.println("0. Back to main");
+        System.out.println("1. Edit First Name");
+        System.out.println("2. Edit Last Name");
+        System.out.println("3. Edit Address");
+        System.out.println("4. Edit Access Card");
+        System.out.println("5. Edit PIN");
+
+        String input = keyboard.next();
+        while (Integer.parseInt(input) != 0) {
+            switch (Integer.parseInt(input)) {
+                case 1:
+                    //edit first names
+                    break;
+                case 2:
+                    //edit last name
+                    break;
+                case 3:
+                    //edit address
+                    break;
+                case 4:
+                    // create account
+                    break;
+                case 5:
+                    editInformation(cust);
+                    break;
+                default:
+                    System.out.println("Please enter a valid command");
+                    manageCustomer(cust);
+                    break;
+            }
+            input = keyboard.next();
+        }
+
+        manageCustomer(cust);
+    }
+
 }
 

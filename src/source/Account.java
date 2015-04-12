@@ -195,7 +195,7 @@ public abstract class Account
 	@Override
 	public String toString()
 	{
-		return String.format("Account# %3d | Type: %8s | Balance: %9.2f | Transactions: %3d |",
-				this.getAcctNumber(), this.getAcctTypeDesc(), this.getAcctBalance(), this.getAcctTransactionCount());
+		return String.format("Account# %3d | Type: %8s | Balance: %9.2f | Max. withdrawal: %7.2f |Transactions: %3d |",
+				this.getAcctNumber(), this.getAcctTypeDesc(), this.getAcctBalance(), this.getMaxWithdrawal(), this.getAcctTransactionCount());
 	}
 }

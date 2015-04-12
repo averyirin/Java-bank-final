@@ -27,7 +27,7 @@ public abstract class Account
 		this.acctBalance = acctBalance;
 		this.maxWithdrawal = maxWithdrawal;
 		this.monthlyFee = monthlyFee;
-		this.freeTransactionCount = transactionCount;
+		this.freeTransactionCount = freeTransactionCount;
 		this.interestRate = interestRate;
 	}
 	
@@ -152,6 +152,12 @@ public abstract class Account
 		return this.acctType.getAccountType();
 	}
 	
+	// this method will return the corresponding account type DESCRIPTION
+	public AccountType getAcctTypeDesc()
+	{
+		return this.acctType;
+	}
+	
 	public double getAcctBalance()
 	{
 		return this.acctBalance;
@@ -185,7 +191,7 @@ public abstract class Account
 	@Override
 	public String toString()
 	{
-		return String.format("Account# %17d | Balance: %20.2f | Transactions: %11d |",
-				this.getAcctNumber(), this.getAcctBalance(), this.getAcctTransactionCount());
+		return String.format("Account# %17d | Type: %10s | Balance: %20.2f | Transactions: %11d |",
+				this.getAcctNumber(), this.getAcctTypeDesc(), this.getAcctBalance(), this.getAcctTransactionCount());
 	}
 }

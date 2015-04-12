@@ -7,7 +7,6 @@ public class CreditAccount extends Account
 	private final double REQUIRED_PAYMENT_COEF = 1.08; // 8% of the total owed
 	private double creditAmount; // This variable holds the amount of credit given to a customer
 	private double totalOwing; // Total of what is owed
-	private double monthlyOwing; // The required  amount to be payed monthly
 	
 	public CreditAccount(double acctBalance, double maxWithdrawal, double monthlyFee, int freeTransactionCount, double interestRate)
 	{
@@ -30,11 +29,34 @@ public class CreditAccount extends Account
 	{
 		if(super.withdraw(amount))
 		{
-			this.totalOwing += amount;
+			this.totalOwing += amount * this.getInterestRate();
 			return true;
 		}
 		else
 			return false;
+	}
+	
+	/**
+	 * Here, when we deposit to credit account, we actually pay for what we owe,
+	 * thus we have to update our total owing balance
+	 * @param amount
+	 * @return true if operation was successful, false otherwise
+	 */
+	@Override
+	public boolean deposit(double amount)
+	{
+		if(super.deposit(amount))
+		{
+			this.totalOwing -= amount;
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	public void calculateAllFees()
+	{
+		this.getMonthlyFee();
 	}
 	
 	
@@ -53,6 +75,6 @@ public class CreditAccount extends Account
 	@Override
 	public String toString()
 	{
-		return super.toString() + String.format("Credit amount: %20.2f | Balance owing: %15.2f", this.getCreditAmount(), this.getTotalOwing());
+		return super.toString() + String.format("Credit amount: %20.2f | Balance owing: %15.2f | Interest rate: %8f", this.getCreditAmount(), this.getTotalOwing(), this.getInterestRate());
 	}
 }

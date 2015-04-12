@@ -18,13 +18,10 @@ public class MainTest
 		System.out.println(account);
 		account.withdraw(1000);
 		System.out.println(account);
-		System.out.println(acct.getCreditOwing());
-		System.out.println(account.getTotalOwed());
 		account.deposit(1000);
+		System.out.println(account);
 		account.withdraw(1000);
 		System.out.println(account);
-		
-		System.out.println(acct.getCreditOwing());
 		System.out.println(account.getTotalOwed());
 	}
 }

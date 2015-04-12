@@ -4,7 +4,7 @@ public class CreditAccount extends Account
 {
 	private final static int ACCT_TYPE = 3; // our account type is 3(credit)
 	private static final double TRANSFER_FEE = 25.00; // Fee to be deducted on transfers
-	private final double REQUIRED_PAYMENT_COEF = 1.08; // 8% of the total owed
+	private final double REQUIRED_PAYMENT_COEF = 0.08; // 8% of the total owed
 	private double creditAmount; // This variable holds the amount of credit given to a customer
 	private double creditOwing; // Total of what is owed
 	private double minCreditPayment;
@@ -33,6 +33,7 @@ public class CreditAccount extends Account
 		{
 			this.creditOwing += amount * this.getInterestRate();
 			this.setTotalOwed(this.creditOwing);
+			setMinCreditPayment();
 			return true;
 		}
 		else
@@ -52,6 +53,7 @@ public class CreditAccount extends Account
 		{
 			this.creditOwing -= amount;
 			this.setTotalOwed(this.creditOwing);
+			setMinCreditPayment();
 			return true;
 		}
 		else
@@ -71,9 +73,14 @@ public class CreditAccount extends Account
 	}
 	// MUTATORS
 	
+	public void setMinCreditPayment()
+	{
+		this.minCreditPayment = this.REQUIRED_PAYMENT_COEF * this.creditOwing;
+	}
+	
 	@Override
 	public String toString()
 	{
-		return super.toString() + String.format("Credit amount: %9.2f | Total owing: %8.2f | Interest rate: %8f", this.getTotalOwed(), this.getCreditOwing(), this.getInterestRate());
+		return super.toString() + String.format("Credit amount: %9.2f | Min credit to pay: %8.2f | Interest rate: %8f", this.creditOwing, this.minCreditPayment, this.getInterestRate());
 	}
 }

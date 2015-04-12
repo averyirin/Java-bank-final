@@ -13,6 +13,7 @@ public class Teller {
     private static String input;
     private static CustomerType tempCustType;
     private static AccountType tempAcctType;
+    private static Account tempAcct;
 
     // menu driven interface
     public static void main(String[] args) {
@@ -55,6 +56,7 @@ public class Teller {
         System.out.println("1. Regular 2. Student 3. Senior 4. Business");
         int custType = keyboard.nextInt();
         tempCustType = CustomerType.values()[custType - 1];
+
         System.out.println("First Name:");
         String firstName = keyboard.next();
         System.out.println("Last Name:");
@@ -66,6 +68,7 @@ public class Teller {
         String sin = keyboard.next();
 
         tempCust = new Customer(firstName, lastName, sin, address, tempCustType.getCustomerType());
+
         customerList.add(tempCust);
         addAccount(tempCustType);
         mainMenu();
@@ -94,90 +97,76 @@ public class Teller {
             if (accChosen == 1) {
 
                 tempAcctType = AccountType.CHEQUING;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
+
             } else if (accChosen == 2) {
 
                 tempAcctType = AccountType.SAVINGS;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
             } else if (accChosen == 3) {
 
                 tempAcctType = AccountType.CREDIT;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
+            } else {
+                System.out.println("Invalid account");
+                mainMenu();
             }
         } else if (tempCustType == CustomerType.STUDENT) {
             if (accChosen == 1) {
 
                 tempAcctType = AccountType.SAVINGS;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
             } else if (accChosen == 2) {
 
                 tempAcctType = AccountType.CREDIT;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
+            } else {
+                System.out.println("Invalid account");
+                mainMenu();
             }
         } else if (custType == CustomerType.SENIOR) {
             if (accChosen == 1) {
                 tempAcctType = AccountType.CHEQUING;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
 
             } else if (accChosen == 2) {
 
                 tempAcctType = AccountType.SAVINGS;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
             } else if (accChosen == 3) {
 
                 tempAcctType = AccountType.CREDIT;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
+            } else {
+                System.out.println("Invalid account");
+                mainMenu();
             }
         } else if (custType == CustomerType.BUSINESS) {
             if (accChosen == 1) {
 
                 tempAcctType = AccountType.CHEQUING;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
             } else if (accChosen == 2) {
 
                 tempAcctType = AccountType.CREDIT;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
             } else if (accChosen == 3) {
 
                 tempAcctType = AccountType.BUSINESS;
+                tempAcct = new CreditAccount(5000, 1000, 8, 0, 1.1495);
+            } else {
+                System.out.println("Invalid account");
+                mainMenu();
             }
         }
+
         //create the acount
-        switch (tempAcctType) {
-            case CHEQUING:
-                // chequing account
-                System.out.println("Chequing Created");
-                /*
-                 * RegularCust regCust = new RegularCust(firstName, lastName,
-                 * address, PIN); customerList.add(regCust);
-                 */
-
-                break;
-            case SAVINGS:
-                // student customer
-                System.out.println("Savings Created");
-                /*
-                 * System.out.println("Student Number?"); int stuNum =
-                 * keyboard.nextInt(); StudentCust studCust = new
-                 * StudentCust(firstName, lastName, address, PIN, stuNum);
-                 * customerList.add(studCust);
-                 */
-                break;
-            case CREDIT:
-                // Senior Customer
-                System.out.println("Credit Created");
-                // Customer seniorCust = new Customer(custType.SENIOR, firstName,
-                // lastName, address, PIN);
-
-                /*
-                 * SeniorCust senCust = new SeniorCust(firstName, lastName, address,
-                 * PIN); customerList.add(senCust);
-                 */
-                break;
-            case BUSINESS:
-                // Business Customer
-                System.out.println("Business Created");
-                /*
-                 * System.out.println("Stocks Available?"); int stockAvail =
-                 * keyboard.nextInt(); BusinessCust busCust = new
-                 * BusinessCust(firstName, lastName, address, PIN, stockAvail);
-                 * customerList.add(busCust);
-                 */
-                break;
-
-            default:
-                System.out.println("An error has occured");
+        if (tempCust.createAcct(tempAcct)) {
+            System.out.println("Account creation successful.");
+        } else {
+            System.out.println("Customer already has max limit of accounts.");
         }
+
     }
 
     private void lookupCustomer() {
@@ -185,14 +174,15 @@ public class Teller {
         System.out.println("-Listing Customers------");
         if (customerList.isEmpty()) {
             System.out.println("There are no customers in your application.");
-        }else{
-        displayCustomerList();
-        Customer foundCust = getManageCustomer();
-        if (foundCust != null) {
-            manageCustomer(foundCust);
         } else {
-            System.out.println("No matching customer found");
-        }
+            displayCustomerList();
+            Customer foundCust = getManageCustomer();
+            if (foundCust != null) {
+                tempCust = foundCust;
+                manageCustomer();
+            } else {
+                System.out.println("No matching customer found");
+            }
         }
         mainMenu();
     }
@@ -213,20 +203,19 @@ public class Teller {
     }
 
     private Customer getManageCustomer() {
-        try{
-        System.out.println("Please enter the customer's ID");
-        int id = keyboard.nextInt();
-        return customerList.get(id-1);
-        }catch(IndexOutOfBoundsException e){
+        try {
+            System.out.println("Please enter the customer's ID");
+            int id = keyboard.nextInt();
+            return customerList.get(id - 1);
+        } catch (IndexOutOfBoundsException e) {
             return null;
         }
-        
-       
+
     }
 
-    private void manageCustomer(Customer cust) {
+    private void manageCustomer() {
 
-        System.out.println("-Edit "+cust.getFirstName()+" "+cust.getLastName()+"------");
+        System.out.println("-Edit " + tempCust.getFirstName() + " " + tempCust.getLastName() + "------");
         // cust.displayCustomerInfo();
         // cust.displayAccountInfo();
         System.out.println("Input a command");
@@ -240,24 +229,26 @@ public class Teller {
         while (Integer.parseInt(input) != 0) {
             switch (Integer.parseInt(input)) {
                 case 1:
-                    getAllAccountBalance(cust);
-                    manageCustomer(cust);
+                    getAllAccount();
+                    manageCustomer();
                     break;
                 case 2:
-                    chooseAccount(cust, TransactionType.DEPOSIT);
+                    chooseAccount(TransactionType.DEPOSIT);
                     break;
                 case 3:
-                    chooseAccount(cust,  TransactionType.WITHDRAWAL);
+                    chooseAccount(TransactionType.WITHDRAWAL);
                     break;
                 case 4:
-                    // create account
+                    System.out.println(tempCust.getCustType());
+                    addAccount(tempCust.getCustType());
+                    manageCustomer();
                     break;
                 case 5:
-                    editInformation(cust);
+                    editInformation();
                     break;
                 default:
                     System.out.println("Please enter a valid command");
-                    manageCustomer(cust);
+                    manageCustomer();
                     break;
             }
             input = keyboard.next();
@@ -265,29 +256,52 @@ public class Teller {
 
         mainMenu();
     }
- public void getAllAccountBalance(Customer cust){
-            String accBalance="";
-            String accType="";
-            System.out.println("Account Type    Account Balance");
-            for(Account tempAccount:cust.getAcctList()){
-                tempAcctType = AccountType.values()[tempAccount.getAcctType()];
-                accBalance += tempAcctType.toString()+": "+Double.toString(tempAccount.getAcctBalance());
-                System.out.print(accBalance);
-            }
+
+    public void getAllAccount() {
+        String accBalance = "";
+        String accType = "";
+        System.out.println("-Accounts in " + tempCust.getFirstName() + " " + tempCust.getLastName() + "----");
+
+        for (Account tempAccount : tempCust.getAcctList()) {
+            tempAcctType = AccountType.values()[tempAccount.getAcctType() - 1];
+            //  accBalance += String.format("%s %20s",
+            // tempAcctType.toString(), Double.toString(tempAccount.getAcctBalance()));
+            accBalance += tempAccount;
+            System.out.println(accBalance);
         }
-    private void chooseAccount(Customer cust, TransactionType transType) {
-        // Display account info
-        // cust.displayAccountInfo();
-        if(transType == TransactionType.DEPOSIT){
-            
-        }else if(transType == TransactionType.WITHDRAWAL){
-            
-        }
-       
-        manageCustomer(cust);
     }
 
-    private void editInformation(Customer cust) {
+    private void chooseAccount(TransactionType transType) {
+        // Display account info
+        // cust.displayAccountInfo();
+        try {
+            getAllAccount();
+            System.out.println("Choose account for your " + transType);
+            int acctChoose = keyboard.nextInt();
+            tempAcct = tempCust.getAcctList().get(acctChoose - 1);
+
+            System.out.println("Amount of your " + transType);
+            double amount = keyboard.nextDouble();
+            if (transType == TransactionType.DEPOSIT) {
+                tempAcct.deposit(amount);
+            } else if (transType == TransactionType.WITHDRAWAL) {
+                tempAcct.withdraw(amount);
+
+            }
+
+            System.out.println("Transaction successful");
+
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("No matching account found");
+
+        } finally {
+
+            manageCustomer();
+        }
+
+    }
+
+    private void editInformation() {
 
         System.out.println("-Edit Information------");
         // display account info
@@ -297,14 +311,14 @@ public class Teller {
         System.out.println("1. Edit First Name");
         System.out.println("2. Edit Last Name");
         System.out.println("3. Edit Address");
-        System.out.println("4. Edit Access Card");
-        System.out.println("5. Edit PIN");
+        System.out.println("4. Edit SIN");
 
         String input = keyboard.next();
         while (Integer.parseInt(input) != 0) {
             switch (Integer.parseInt(input)) {
                 case 1:
                     //edit first names
+                    String fName = keyboard.next();
                     break;
                 case 2:
                     //edit last name
@@ -316,18 +330,17 @@ public class Teller {
                     // create account
                     break;
                 case 5:
-                    editInformation(cust);
+                    editInformation();
                     break;
                 default:
                     System.out.println("Please enter a valid command");
-                    manageCustomer(cust);
+                    manageCustomer();
                     break;
             }
             input = keyboard.next();
         }
 
-        manageCustomer(cust);
+        manageCustomer();
     }
 
 }
-

@@ -34,35 +34,23 @@ public class Customer
 	/**
 	 * Creates an account if account limit is not exceeded and adds it to account list
 	 */
-	public boolean createAcct(int acctType)
+        public CustomerType getCustType(){
+            return this.custType;
+        }
+	public boolean createAcct(Account acct)
 	{
 		
 		if (acctCount < ACCT_LIMIT)
 		{
-			switch(acctType)
-			{
-				case 1:
-					acct_temp = new ChequingAccount(this.custType.getCustomerType());
-					break;
-				case 2:
-					acct_temp = new SavingsAccount(this.custType.getCustomerType());
-					break;
-				case 3:
-					acct_temp = new CreditAccount(this.custType.getCustomerType());
-					break;
-				case 4:
-					acct_temp = new BusinessAccount(this.custType.getCustomerType());
-					break;
-				default:
-			}
-			this.acctList.add(acct_temp);
+		
+			this.acctList.add(acct);
 			acctCount += 1;
 			return true;	
-		}
-		else
-		{
-			return false;
-		}
+                	
+		}else{
+                    return false;
+                }
+    
 	}
 	
 	// MUTATORS
@@ -89,9 +77,9 @@ public class Customer
 	private void setCustType(int type)
 	{
 		if(type == 1)
-			this.custType = CustomerType.STUDENT;
-		else if(type == 2)
 			this.custType = CustomerType.REGULAR;
+		else if(type == 2)
+			this.custType = CustomerType.STUDENT;
 		else if(type == 3)
 			this.custType = CustomerType.SENIOR;
 		else if(type == 4)

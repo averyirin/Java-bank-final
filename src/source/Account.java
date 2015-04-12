@@ -32,15 +32,6 @@ public abstract class Account
 	}
 	
 	/**
-	 * This method will return monthly fee for an account
-	 * @return monthlyFee
-	 */
-	public double calculateFees()
-	{
-		return this.monthlyFee;
-	}
-	
-	/**
 	 * retrieves account number from account support class
 	 * and assigns it to the new account
 	 */

@@ -4,7 +4,7 @@ public class CreditAccount extends Account
 {
 	private final static int ACCT_TYPE = 3; // our account type is 3(credit)
 	private static final double TRANSFER_FEE = 25.00; // Fee to be deducted 
-	private final double REQUIRED_PAYMENT_COEF = 1.08; // 8% of the totalowed
+	private final double REQUIRED_PAYMENT_COEF = 1.08; // 8% of the total owed
 	private double creditAmount; // This variable holds the amount of credit given to a customer
 	private double totalOwing; // Total of what is owed
 	private double monthlyOwing; // The required  amount to be payed monthly
